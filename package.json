@@ -1,0 +1,52 @@
+{
+  "name": "cat-focus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cat Focus - a cute focus timer with a desktop app wrapper",
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "desktop": "electron .",
+    "desktop:pack": "electron-builder --dir",
+    "desktop:build": "electron-builder",
+    "check": "node scripts/check-project.mjs"
+  },
+  "devDependencies": {
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.zhangthird.catfocus",
+    "productName": "Cat Focus",
+    "asar": true,
+    "files": [
+      "cat-focus.html",
+      "vite.svg",
+      "desktop/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "artifactName": "Cat-Focus-${version}-${arch}.${ext}"
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility"
+    }
+  }
+}
