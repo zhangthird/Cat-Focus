@@ -20,6 +20,7 @@
     "asar": true,
     "files": [
       "cat-focus.html",
+      "vite.svg",
       "desktop/**/*",
       "package.json"
     ],
