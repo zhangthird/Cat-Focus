@@ -1,82 +1,121 @@
 # 🐱 Cat Focus - 猫咪专注计时器
 
-一个可爱的番茄钟专注计时器，帮助你保持专注，提升工作效率！通过专注获得鱼干奖励，陪伴你的猫咪一起成长。
+一个可爱的番茄钟专注计时器。完成专注任务可以获得鱼干奖励，并查看累计专注时间与近 7 天趋势。
 
-## ✨ 特性
+## 功能
 
-- 🎯 **专注计时**: 可自定义专注时长，默认番茄钟模式
-- 🐟 **鱼干奖励系统**: 完成专注任务获得鱼干奖励，激励持续专注
-- 📊 **数据统计**: 
-  - 总专注时长统计
-  - 累计获得鱼干数量
-  - 近7天专注趋势图表
-- 🎨 **精美界面**: 采用现代化设计，界面简洁美观
-- 💾 **本地存储**: 数据保存在本地，隐私安全
-- 📱 **响应式设计**: 支持各种设备尺寸
+- 自定义专注时长与倒计时
+- 完成专注后获得鱼干奖励
+- 总专注时长、累计鱼干和近 7 天趋势统计
+- 响应式界面
+- 浏览器本地数据持久化
+- Electron 桌面应用支持
+- Windows、macOS、Linux 自动构建
 
-## 🚀 使用方法
+## 直接使用网页版
 
-### 在线使用
+直接打开 `cat-focus.html` 即可使用，无需安装依赖。
 
-直接打开 `cat-focus.html` 文件即可开始使用，无需额外安装。
+应用数据通过浏览器 `localStorage` 保存在本机。
 
-### 功能说明
+## 桌面应用
 
-1. **开始专注**
-   - 点击"开始"按钮启动专注计时器
-   - 设置你想要专注的时间（分钟）
-   - 计时器开始倒计时
+项目现在提供 Electron 桌面壳，并继续复用现有 `cat-focus.html`，因此不需要重写应用逻辑。
 
-2. **获得奖励**
-   - 完成专注任务后自动获得鱼干奖励
-   - 鱼干可用于未来的功能扩展
+### 本地运行
 
-3. **查看统计**
-   - 查看总专注时长
-   - 查看累计获得的鱼干数量
-   - 查看近7天的专注趋势图表
+需要 Node.js 22 或兼容版本。
 
-## 🛠️ 技术栈
-
-- **React 19.2.0**: 前端框架
-- **React DOM**: DOM 渲染
-- **Vite**: 构建工具
-- **本地存储**: 数据持久化
-
-## 📦 项目结构
-
+```bash
+npm install
+npm run desktop
 ```
+
+### 构建安装包
+
+```bash
+npm install
+npm run desktop:build
+```
+
+构建产物位于 `release/`：
+
+- Windows：NSIS 安装包与 Portable 版本
+- macOS：DMG 与 ZIP
+- Linux：AppImage 与 DEB
+
+也可以在 GitHub Actions 的 `Desktop Build` 工作流中自动构建三个平台的安装包。
+
+## 桌面版数据存储
+
+桌面版使用固定的 Electron persistent session：`persist:cat-focus`。
+
+现有应用使用的 `localStorage` 会因此持久化到 Electron 的本地 `userData` 数据目录，而不是只存在于应用运行期间。因此正常关闭应用、重新启动应用以及重新启动电脑后，专注记录、鱼干和统计数据仍会保留。
+
+数据不会主动上传到远程服务器。
+
+注意：如果用户主动清除应用数据，或者卸载程序时同时删除用户数据目录，本地记录可能被删除。后续可以进一步增加 JSON 导出、导入和自动备份功能。
+
+## 项目检查
+
+```bash
+npm run check
+```
+
+该命令会检查桌面入口、HTML 主文件和项目配置是否存在且基本一致。
+
+## 项目结构
+
+```text
 Cat-Focus/
-├── cat-focus.html    # 主应用文件（包含所有打包后的代码）
-└── README.md         # 项目说明文档
+├── .github/workflows/desktop-build.yml
+├── desktop/
+│   ├── main.cjs
+│   └── preload.cjs
+├── scripts/
+│   └── check-project.mjs
+├── cat-focus.html
+├── package.json
+├── vite.svg
+└── README.md
 ```
 
-## 🎯 使用场景
+## 桌面安全配置
 
-- 📚 学习工作时需要保持专注
-- 💻 编程开发时进行时间管理
-- 📝 写作创作时避免分心
-- 🎨 设计创作时提高效率
+Electron renderer 默认不开放 Node.js 权限：
 
-## 💡 提示
+- `nodeIntegration: false`
+- `contextIsolation: true`
+- `sandbox: true`
+- 外部 HTTP/HTTPS 链接交给系统浏览器打开
 
-- 建议每次专注时间设置在 25-50 分钟之间
-- 专注期间避免查看手机和其他干扰
-- 完成专注后适当休息，保持良好的工作节奏
-- 定期查看统计数据，了解自己的专注习惯
+如果以后需要文件导入导出、系统通知、托盘等桌面能力，应通过 `preload.cjs` 暴露最小化 API，而不是直接给页面 Node.js 权限。
 
-## 🤝 贡献
+## 技术栈
 
-欢迎提出建议和改进意见！
+- React 19.2.0
+- React DOM
+- Vite 构建产物
+- Electron
+- electron-builder
+- localStorage / Electron persistent session
 
-## 📄 许可证
+## 后续适合继续做的优化
 
-本项目采用 MIT 许可证。
+当前仓库中的 React 应用仍然是一个已经打包完成的 `cat-focus.html`。为了方便长期维护，下一阶段建议恢复为标准源码工程，例如 `src/`、`public/`、`vite.config.*`，再由 Vite 分别输出 Web 和 Electron renderer 产物。
 
-## 🌟 开始使用
+在此基础上，可以继续加入：
 
-现在就打开 `cat-focus.html`，开始你的专注之旅吧！让可爱的猫咪陪伴你一起成长！
+- 专注历史明细
+- 数据导出 / 导入 / 自动备份
+- 系统通知与完成提醒
+- 系统托盘和最小化到托盘
+- 开机启动
+- 深色模式
+- 自定义桌面图标
+- GitHub Release 自动发布安装包
+- 自动更新
 
----
+## License
 
-*让专注变得更有趣 🐱💕*
+MIT
