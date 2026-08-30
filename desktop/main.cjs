@@ -1,10 +1,17 @@
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, session } = require('electron');
 const path = require('node:path');
 
 const APP_WIDTH = 1180;
 const APP_HEIGHT = 820;
+const PERSISTENT_PARTITION = 'persist:cat-focus';
+
+app.setName('Cat Focus');
 
 function createWindow() {
+  const persistentSession = session.fromPartition(PERSISTENT_PARTITION, {
+    cache: true,
+  });
+
   const win = new BrowserWindow({
     width: APP_WIDTH,
     height: APP_HEIGHT,
@@ -15,6 +22,7 @@ function createWindow() {
     backgroundColor: '#f7f7f7',
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
+      session: persistentSession,
       nodeIntegration: false,
       contextIsolation: true,
       sandbox: true,
