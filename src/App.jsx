@@ -453,7 +453,7 @@ export default function App() {
               className={
                 "group hover:opacity-70 transition-opacity flex items-center justify-center"
               }
-              title={language === "zh" ? "猫猫专注提示" : "Focus tips"}
+              title={language === "zh" ? "猫猫教练" : "Focus tips"}
             >
               <Sparkles size={22} className={"text-yellow-500 animate-pulse"} />
             </button>
