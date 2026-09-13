@@ -907,7 +907,6 @@ export default function App() {
                 )}
                 {modal === "collect" && (
                   <div className={"space-y-6"}>
-                    <ApiSettings config={apiConfig} setConfig={setApiConfig} remember={rememberKey} setRemember={setRememberKey} language={language} />
                     <div>
                       <h3
                         className={
@@ -1010,6 +1009,7 @@ export default function App() {
                 )}
                 {modal === "settings" && (
                   <div className={"space-y-6"}>
+                    <ApiSettings config={apiConfig} setConfig={setApiConfig} remember={rememberKey} setRemember={setRememberKey} language={language} />
                     <div>
                       <h3
                         className={
