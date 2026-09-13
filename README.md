@@ -15,7 +15,7 @@
 
 ## 直接使用
 
-下载并用浏览器打开根目录的 `cat-focus.html`，无需安装依赖。应用代码和样式已包含在文件中；在线字体不可用时使用系统字体。
+从仓库的 [Releases](https://github.com/zhangthird/Cat-Focus/releases) 下载附件 `cat-focus.html`，用浏览器打开即可，无需安装依赖。应用代码和样式已包含在文件中；在线字体不可用时使用系统字体。
 
 浏览器本地存储不会自动跨设备、跨浏览器或在不同访问地址间同步。迁移进度时，请先在“设置 → 本机数据与备份”中导出 JSON，再到新环境导入。清理浏览器数据前请先备份。
 
@@ -44,13 +44,13 @@ npm run build
 npm run preview
 ```
 
-根据当前源码重新生成可直接打开的单文件版本：
+根据当前源码在本地生成可直接打开的单文件版本：
 
 ```bash
 npm run build:single
 ```
 
-这个命令会更新根目录的 `cat-focus.html`。开发时应修改 `src/`，然后重新构建，避免直接修改打包后的 HTML。
+这个命令会在根目录生成 `cat-focus.html`，该成品已被 Git 忽略，不再提交到源码仓库。开发时应修改 `src/`，然后重新构建，避免直接修改打包后的 HTML。
 
 ## 目录结构
 
@@ -78,9 +78,12 @@ Cat-Focus/
 ├── vite.config.js             # 构建配置
 ├── package.json
 ├── package-lock.json          # 锁定依赖版本
-├── cat-focus.html             # 可直接打开的单文件成品
 └── README.md
 ```
+
+## 发布发行版
+
+更新 `package.json` 中的版本号及对应锁定文件后推送到 `main`，发布工作流会构建单文件成品，并将 `cat-focus.html` 上传到对应版本的发行版附件。也可以在 Actions 中手动运行 `Publish release`。已发布的版本会跳过，不会覆盖；发布新版本前应先更新版本号。
 
 ## 源码说明
 
