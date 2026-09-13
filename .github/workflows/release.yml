@@ -1,0 +1,57 @@
+name: Publish release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+      - .github/workflows/release.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cat-focus-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Read version
+        id: version
+        run: node -e "console.log('tag=v' + JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version)" >> "$GITHUB_OUTPUT"
+      - name: Check published version
+        id: existing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if gh release view "$TAG" --json isDraft --jq '.isDraft' > /tmp/release-state; then
+            if [ "$(cat /tmp/release-state)" = false ]; then
+              echo "published=true" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+      - name: Install dependencies
+        if: steps.existing.outputs.published != 'true'
+        run: npm ci
+      - name: Build single-file application
+        if: steps.existing.outputs.published != 'true'
+        run: npm run build:single
+      - name: Publish HTML attachment
+        if: steps.existing.outputs.published != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --draft --target "$GITHUB_SHA" --title "Cat Focus $TAG" --notes "下载附件 cat-focus.html 后，用浏览器打开即可使用。包含专注计时、猫咪收藏、鱼干奖励与本地备份功能。"
+          fi
+          gh release upload "$TAG" cat-focus.html --clobber
+          gh release edit "$TAG" --draft=false
