@@ -31,7 +31,7 @@ export const translations = {
     aiPlaceholder: "告诉猫猫你在忙什么...",
     aiSend: "发送",
     aiLoading: "猫猫思考中...",
-    aiIntro: "告诉猫猫教练你要做的事，一起找到现在就能开始的小步骤。",
+    aiIntro: "喵？在这个框里输入你的任务，我会给你一点建议哦！",
     owned: "已拥有",
     price: "🐟",
     weekStats: "近7天专注趋势",

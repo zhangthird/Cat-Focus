@@ -20,7 +20,7 @@ export async function requestCoach(config, task, minutes, language, signal) {
       method: 'POST', redirect: 'error', signal: controller.signal,
       headers: { 'Content-Type': 'application/json', ...(config.apiKey.trim() ? { Authorization: 'Bearer ' + config.apiKey.trim() } : {}) },
       body: JSON.stringify({ model: config.model.trim(), stream: false, messages: [
-        { role: 'system', content: 'You are a friendly cat focus coach. Reply in ' + (language === 'zh' ? 'Chinese' : 'English') + ' with three brief practical steps for a ' + minutes + '-minute session. Use plain text.' },
+        { role: 'system', content: "You are a supportive, cute cat focus coach. Reply in " + (language === "zh" ? "Chinese" : "English") + ". Be brief (max 2 sentences), use cat puns or 'meow' sounds, and be motivating." },
         { role: 'user', content: task.trim().slice(0, 4000) }
       ] })
     });
