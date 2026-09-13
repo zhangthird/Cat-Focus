@@ -755,7 +755,7 @@ export default function App() {
               <div className={"flex-1 overflow-y-auto custom-scrollbar p-2"}>
                 {modal === "ai" && (
                   <div className={"flex flex-col h-full"}>
-                    <button className="mb-4 underline" onClick={() => setModal("settings")}>
+                    <button className="font-hand text-lg mb-4 underline" onClick={() => setModal("settings")}>
                       {language === "zh" ? (apiConfig.enabled ? "大模型模式 · API 设置" : "本地提示模式 · 配置大模型 API") : (apiConfig.enabled ? "AI mode · API settings" : "Local tips · Configure model API")}
                     </button>
                     <div
