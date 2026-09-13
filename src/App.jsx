@@ -15,7 +15,20 @@ import { catalog, catMessages } from "./data/catalog";
 import { Artwork } from "./components/Artwork";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { localDay } from "./utils/date";
+import ApiSettings from "./components/ApiSettings";
+import { requestCoach } from "./utils/llm";
 export default function App() {
+  const [apiConfig, setApiConfig] = React.useState(() => {
+    try { const saved = JSON.parse(localStorage.getItem('catFocus_api') || '{}'); return { enabled: saved.enabled === true, baseUrl: typeof saved.baseUrl === 'string' ? saved.baseUrl : '', model: typeof saved.model === 'string' ? saved.model : '', apiKey: typeof saved.apiKey === 'string' ? saved.apiKey : '' }; }
+    catch { return { enabled: false, baseUrl: '', model: '', apiKey: '' }; }
+  });
+  const [rememberKey, setRememberKey] = React.useState(() => Boolean(apiConfig.apiKey));
+  const coachRequest = React.useRef(null);
+  React.useEffect(() => {
+    try { localStorage.setItem('catFocus_api', JSON.stringify({ ...apiConfig, apiKey: rememberKey ? apiConfig.apiKey : '' })); }
+    catch { setToast('无法保存 API 设置 / Could not save API settings'); }
+  }, [apiConfig, rememberKey]);
+  React.useEffect(() => () => coachRequest.current?.abort(), []);
   const [language, setLanguage] = useLocalStorage("catFocus_lang", "zh");
   const text = translations[language];
   const [duration, setDuration] = useLocalStorage("catFocus_initialTime", 25);
@@ -234,7 +247,16 @@ export default function App() {
     fileInput.current && (fileInput.current.value = "");
   };
   const suggestFocus = async () => {
-    if (!task.trim()) return;
+    if (!task.trim() || coachRequest.current) return;
+    if (apiConfig.enabled) {
+      const controller = new AbortController();
+      coachRequest.current = controller;
+      setTipLoading(true);
+      try { setTip(await requestCoach(apiConfig, task, duration, language, controller.signal)); }
+      catch (error) { setTip(error.message); }
+      finally { coachRequest.current = null; setTipLoading(false); }
+      return;
+    }
     setTip(
       language === "zh"
         ? `喵，先把“${task.trim().slice(0, 100)}”拆成一个现在就能开始的小步骤。设定 ${duration} 分钟，只做这一步；结束后记得起身休息。`
@@ -733,6 +755,9 @@ export default function App() {
               <div className={"flex-1 overflow-y-auto custom-scrollbar p-2"}>
                 {modal === "ai" && (
                   <div className={"flex flex-col h-full"}>
+                    <button className="mb-4 underline" onClick={() => setModal("settings")}>
+                      {language === "zh" ? (apiConfig.enabled ? "大模型模式 · API 设置" : "本地提示模式 · 配置大模型 API") : (apiConfig.enabled ? "AI mode · API settings" : "Local tips · Configure model API")}
+                    </button>
                     <div
                       className={
                         "flex-1 bg-black/5 rounded-2xl p-4 mb-4 overflow-y-auto font-hand text-lg"
@@ -740,7 +765,7 @@ export default function App() {
                     >
                       {tip ? (
                         <div
-                          className={"animate-in fade-in zoom-in duration-300"}
+                          className={"animate-in fade-in zoom-in duration-300"} style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}
                         >
                           <span className={"text-2xl mr-2"}>{"🐱"}</span> {tip}
                         </div>
@@ -882,6 +907,7 @@ export default function App() {
                 )}
                 {modal === "collect" && (
                   <div className={"space-y-6"}>
+                    <ApiSettings config={apiConfig} setConfig={setApiConfig} remember={rememberKey} setRemember={setRememberKey} language={language} />
                     <div>
                       <h3
                         className={
