@@ -1,0 +1,32 @@
+export const themes = {
+  dark: {
+    id: "dark",
+    bg: "#121212",
+    text: "#E0E0E0",
+    stroke: "#E0E0E0",
+    numColor: "#D4E157",
+    numStroke: "#D4E157",
+    startBtn: "#FFFFFF",
+    paperTexture: true,
+  },
+  light: {
+    id: "light",
+    bg: "#F0F0EB",
+    text: "#3E2723",
+    stroke: "#3E2723",
+    numColor: "#8BA870",
+    numStroke: "#556B2F",
+    startBtn: "#4A6C45",
+    paperTexture: true,
+  },
+  retro: {
+    id: "retro",
+    bg: "#556B2F",
+    text: "#F1F8E9",
+    stroke: "#2E3B28",
+    numColor: "#DCEDC8",
+    numStroke: "#DCEDC8",
+    startBtn: "#FFFFFF",
+    paperTexture: true,
+  },
+};
